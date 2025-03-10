@@ -1,0 +1,27 @@
+services:
+  seq-input-gelf:
+    image: datalust/seq-input-gelf:latest
+    depends_on:
+      - seq
+    ports:
+      - "12201:12201/udp"
+    logging:
+      driver: local # cannot log to self using default
+    environment:
+      SEQ_ADDRESS: "http://seq:5341"
+    restart: unless-stopped
+  seq:
+    image: datalust/seq:latest
+    ports:
+      - "5341:80"
+    logging:
+      driver: local # cannot log to self using default
+    environment:
+      ACCEPT_EULA: Y
+    restart: unless-stopped
+    volumes:
+      - type: volume
+        source: seq-data
+        target: /data
+volumes:
+  seq-data:
